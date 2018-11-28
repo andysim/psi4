@@ -93,17 +93,13 @@ Wavefunction::Wavefunction(SharedWavefunction reference_wavefunction, Options &o
 }
 
 // TODO: pass Options object to constructor instead of relying on globals
-Wavefunction::Wavefunction(std::shared_ptr<Molecule> molecule, std::shared_ptr<BasisSet> basisset, 
+Wavefunction::Wavefunction(std::shared_ptr<Molecule> molecule, std::shared_ptr<BasisSet> basisset,
                            std::map<std::string, std::shared_ptr<Matrix>> matrices,
                            std::map<std::string, std::shared_ptr<Vector>> vectors,
-                           std::map<std::string, Dimension> dimensions, std::map<std::string, int> ints, 
-                           std::map<std::string, std::string> strings, std::map<std::string, bool> booleans, 
+                           std::map<std::string, Dimension> dimensions, std::map<std::string, int> ints,
+                           std::map<std::string, std::string> strings, std::map<std::string, bool> booleans,
                            std::map<std::string, double> floats)
-    : options_(Process::environment.options),
-      basisset_(basisset),
-      molecule_(molecule) {
-
-
+    : options_(Process::environment.options), basisset_(basisset), molecule_(molecule) {
     // Check the point group of the molecule. If it is not set, set it.
     if (!molecule_->point_group()) {
         molecule_->set_point_group(molecule_->find_point_group());
@@ -141,7 +137,7 @@ Wavefunction::Wavefunction(std::shared_ptr<Molecule> molecule, std::shared_ptr<B
     nbetapi_ = dimensions["nbetapi"];
     nmopi_ = dimensions["nmopi"];
     nsopi_ = dimensions["nsopi"];
-     
+
     // set integers
     nalpha_ = ints["nalpha"];
     nbeta_ = ints["nbeta"];
@@ -150,7 +146,7 @@ Wavefunction::Wavefunction(std::shared_ptr<Molecule> molecule, std::shared_ptr<B
     nmo_ = ints["nmo"];
     nso_ = ints["nso"];
     print_ = ints["print"];
-    
+
     // set strings
     name_ = strings["name"];
 
@@ -231,6 +227,7 @@ void Wavefunction::shallow_copy(const Wavefunction *other) {
     epsilon_a_ = other->epsilon_a_;
     epsilon_b_ = other->epsilon_b_;
 
+    dipole_gradient_ = other->dipole_gradient_;
     gradient_ = other->gradient_;
     hessian_ = other->hessian_;
     external_pot_ = other->external_pot_;
@@ -311,6 +308,7 @@ void Wavefunction::deep_copy(const Wavefunction *other) {
     if (other->epsilon_a_) epsilon_a_ = SharedVector(other->epsilon_a_->clone());
     if (other->epsilon_b_) epsilon_b_ = SharedVector(other->epsilon_b_->clone());
 
+    if (other->dipole_gradient_) dipole_gradient_ = other->dipole_gradient_->clone();
     if (other->gradient_) gradient_ = other->gradient_->clone();
     if (other->hessian_) hessian_ = other->hessian_->clone();
 
@@ -421,6 +419,7 @@ std::shared_ptr<Wavefunction> Wavefunction::c1_deep_copy(std::shared_ptr<BasisSe
 
     // these are simple SharedMatrices of size 3*natom_, etc., so should
     // not depend on symmetry ... can just copy them
+    if (dipole_gradient_) wfn->dipole_gradient_ = dipole_gradient_->clone();
     if (gradient_) wfn->gradient_ = gradient_->clone();
     if (hessian_) wfn->hessian_ = hessian_->clone();
 
@@ -1290,15 +1289,19 @@ SharedMatrix Wavefunction::X() const { return Lagrangian_; }
 
 SharedMatrix Wavefunction::gradient() const { return gradient_; }
 
-void Wavefunction::set_gradient(SharedMatrix &grad) { gradient_ = grad; }
+void Wavefunction::set_gradient(SharedMatrix grad) { gradient_ = grad; }
+
+SharedMatrix Wavefunction::dipole_gradient() const { return dipole_gradient_; }
+
+void Wavefunction::set_dipole_gradient(SharedMatrix grad) { dipole_gradient_ = grad; }
 
 SharedMatrix Wavefunction::hessian() const { return hessian_; }
 
-void Wavefunction::set_hessian(SharedMatrix &hess) { hessian_ = hess; }
+void Wavefunction::set_hessian(SharedMatrix hess) { hessian_ = hess; }
 
 SharedVector Wavefunction::frequencies() const { return frequencies_; }
 
-void Wavefunction::set_frequencies(std::shared_ptr<Vector> &freqs) { frequencies_ = freqs; }
+void Wavefunction::set_frequencies(std::shared_ptr<Vector> freqs) { frequencies_ = freqs; }
 
 void Wavefunction::save() const {}
 
