@@ -129,10 +129,6 @@ void export_wavefunction(py::module& m) {
         .def("get_basisset", &Wavefunction::get_basisset, "Returns the requested auxiliary basis.")
         .def("set_basisset", &Wavefunction::set_basisset, "Sets the requested auxiliary basis.")
         .def("energy", &Wavefunction::reference_energy, "Returns the Wavefunctions energy.")
-        .def("dipole_gradient", &Wavefunction::dipole_gradient,
-             "Returns the Wavefunctions dipole derivative w.r.t. nuclear perturbations (a.u.) as a 3N x 3 matrix.")
-        .def("set_dipole_gradient", &Wavefunction::set_dipole_gradient,
-             "Sets the Wavefunctions dipole derivative w.r.t. nuclear perturbations (a.u.) as a 3N x 3 matrix).")
         .def("gradient", &Wavefunction::gradient, "Returns the Wavefunctions gradient.")
         .def("set_gradient", &Wavefunction::set_gradient, "Sets the Wavefunctions gradient.")
         .def("hessian", &Wavefunction::hessian, "Returns the Wavefunctions Hessian.")
