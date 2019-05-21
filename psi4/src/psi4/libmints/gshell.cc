@@ -49,7 +49,6 @@ ShellInfo::ShellInfo(int am, const std::vector<double> &c, const std::vector<dou
 
     for (size_t prim = 0; prim < c.size(); ++prim) {
         original_coef_.push_back(c[prim]);
-        coef_.push_back(c[prim]);
         erd_coef_.push_back(c[prim]);
     }
 
@@ -63,6 +62,7 @@ ShellInfo::ShellInfo(int am, const std::vector<double> &c, const std::vector<dou
     for (size_t prim = 0; prim < c.size(); ++prim) {
         original_coef_.push_back(c[prim]);
         n_.push_back(0);
+        erd_coef_.push_back(0);
     }
 
     ncartesian_ = INT_NCART(l_);
